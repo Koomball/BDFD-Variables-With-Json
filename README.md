@@ -53,6 +53,7 @@ $json[apples] Apples
 $json[oranges] Oranges
 $json[pears] Pears
 ```
+![image](2023-06-08_172710848.png)
 ## /start
 
 ### Setting up your /start command
