@@ -78,6 +78,7 @@ $jsonSetString[cash;0]
 $jsonSetString[xp;0]
 $jsonSetString[lvl;0]
 $jsonSetString[lvlR;100]
+$jsonSetString[multi;1]
 $setVar[stats;$jsonStringify;$authorID]
 
 $jsonParse[$getVar[items;$authorID]]
@@ -153,15 +154,60 @@ $endif
 *remember to add new versions to all your commands Version Checkers and to `$if[$and[$json[0.1]==true]` in the /update command*
 
 # Adding to JSON Strings
-
+Now that we got the essentials out the way lets get into actually using these JSON variables to do stuff, Below i will explain `$calculate` and how to use it with `$json, $jsonParse and $jsonSetString` to modify a users cash and set up a cash multiplier. <br>
 ### $calculate
+`$calculate[equation]` is a combined version of `$sum, $sub, $multi, $divide and $modulo` this function is more efficient and will be what we use throughout this guide below are some examples of how it can be used. <br>
+`$calculate` uses these expressions to do its math. <br>
+`+ Addition,` <br>
+`- Subtraction,` <br>
+`* Multiplication,` <br>
+`/ Division,` <br>
+`% Modulo.` <br>
+Here are some examples of it being used with `$jsonSetString`
+```
+// +500 Cash Example
+$jsonSetString[cash;$calculate[$json[cash]+500]]
 
+// -500 Cash Example
+$jsonSetString[cash;$calculate[$json[cash]-500]]
+
+// Double Users Cash
+$jsonSetString[cash;$calculate[$json[cash]*2]]
+
+// Halve Users Cash
+$jsonSetString[cash;$calculate[$json[cash]/2]]
+```
 ### /add-cash
+In this section we will make a command that adds a inputted amount of cash to a user. Firstly we must make a slash command and name it `add-cash` this slash command will need two options which can be added below where you name and set the description of your slash command. The first option you need is `user` set this to a user input and mark it as required. The second option will be called `amount` leave the input type as the default and set it as required. <br>
+Now we will use the code below to add to the selected users cash.
+```
+$jsonParse[$getVar[stats;$message[user]]
+$jsonSetString[cash;$calculate[$json[cash]+$message[amount]]]
+$setVar[stats;$jsonStringify;$message[user]]
+$title[added $message[amount] cash to user]
+```
 
 ### /remove-cash
-
+We can reverse the effect in another command with the same options but lets name it `remove-cash` swap the `+` in `$jsonSetString` with a `-` and now you have a command that removes cash from the inputted user.
+```
+$jsonParse[$getVar[stats;$message[user]]
+$jsonSetString[cash;$calculate[$json[cash]-$message[amount]]]
+$setVar[stats;$jsonStringify;$message[user]]
+$title[added $message[amount] cash to user]
+```
 ### Boosters
-
+This example will use the xp and level values we setup in our `/start` command, if you have followed this guide correctly in the variable stats your should have the values of these strings stored `xp, lvl, lvlR and multi` the purpose of each of these are as listed. <br>
+`xp - how much XP the user has,` <br>
+`lvl - what Level the user is,` <br>
+`lvlR - how much XP the user must hit to level up,` <br>
+`multi - how much the users xp gain is multiplied by. (default is 1 so theres no boost.)` <br>
+In the code below we will use `$jsonSetString` along with `$calculate` to setup an XP multi whenever your giving the user xp.
+```
+$jsonParse[$getVar[stats;$authorID]]
+$jsonSetString[xp;$calculate[$json[xp]+($random[1;6]*$json[multi])]]
+$setVar[stats;$jsonStringify;$authorID]
+```
+*This code will be expanded on later in the guide when we explain leveling up.*
 # Economy System
 
 ### /balance
