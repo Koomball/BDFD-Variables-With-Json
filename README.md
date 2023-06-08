@@ -1,25 +1,29 @@
-Directory
-
-Important Information
-- [JSON Functions](#json-functions)
-  - [$jsonParse](#jsonparseparsing)
-  - [$jsonSetString](#jsonsetstringstringvalue)
-
-- [/start](#start)
-  - [Setting up your /start command](#setting-up-your-start-command)
-- [Setting Up After /start](#setting-up-after-start)
-  - [Version Checking](#version-checking)
-  - [/update](#update) 
-
-Guides
-- [Economy and Items With Json](#economy-and-items-with-json)
-  - [/balance](#balance)
-  - [/inventory](#inventory)
-  - [/buy & /sell](#sell--buy)
 # BDFD Variables with JSON
 Bot Designer for Discord is an excellent app but one issue you may encounter making your bot is the variable limit, this guide will introduce you to using JSON with variables to be able to save yourself a massive amount of variables.
 
 This guide will explain how to setup JSON variables, update users variables, setup an economy system and a levels system + a little extra. I hope its easy to understand and that this guide helps you on your bot developing journey. 
+
+- **Important Information**
+  - [JSON Functions](#json-functions) 
+    > [$jsonParse](#jsonparseparsing) <br>
+    > [$jsonSetString](#jsonsetstringstringvalue) <br>
+    > [$json](#jsonstring) <br>
+  - [/start & setting json variables](#start-and-update)
+    > [Setting up your /start command](#setting-up-your-start-command) <br>
+  - [Setting Up After /start](#setting-up-after-start) <br>
+    > [Version Checking](#version-checking) <br>
+    > [/update](#update) <br>
+- **Basic Guides.**
+  - [Adding to JSON Strings](#adding-to-json-strings)
+    > [$calculate](#calculate) <br>
+    > [/add-cash](#add-cash) <br>
+    > [/remove-cash](#remove-cash) <br>
+    > [Boosters](#boosters) <br>
+  - [Economy and Items With Json](#economy-system)
+    > [/balance](#balance) <br>
+    > [/work](#work) <br>
+    > [/inventory](#inventory) <br>
+    > [/buy & /sell](#sell--buy) <br>
 
 # JSON Functions
 ### $jsonParse[parsing]
@@ -56,7 +60,7 @@ $json[pears] Pears
 ![image](image_2023-06-08_172710848.png) <br>
 *The two blocks of code will output these results.*
 
-## /start
+# /start and /update
 Now that you understand the basics i will explain an important part of JSON variables, which is a /start command and a Version Checker (explained later). The purpose of a `/start` command is to set the users variables with the correct json code before they can use any other command. this ensures no errors occur later down the line as for example a command may add an +1 apple to the user, but if `$json[apple]` doesnt return a number then the code can break. <br>
 
 ### Setting up your /start command
@@ -148,7 +152,21 @@ $endif
 ```
 *remember to add new versions to all your commands Version Checkers and to `$if[$and[$json[0.1]==true]` in the /update command*
 
+# Adding to JSON Strings
+
+### $calculate
+
+### /add-cash
+
+### /remove-cash
+
+### Boosters
+
+# Economy System
+
 ### /balance
+
+### /work
 
 ### /inventory
 
