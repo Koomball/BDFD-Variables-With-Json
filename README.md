@@ -22,8 +22,21 @@ This guide will explain how to setup JSON variables, update users variables, set
   - [Economy and Items With Json](#economy-system)
     > [/balance](#balance) <br>
     > [/work](#work) <br>
-    > [/inventory](#inventory) <br>
+    > [Dynamic /inventory](#dynamic-inventory) <br>
     > [/buy & /sell](#sell--buy) <br>
+  - [XP & Levels](#xp--levels)
+    > [/profile](#profile) <br>
+    > [XP in Commands](#xp-in-commands) <br>
+    > [Leveling Up](#leveling-up) <br>
+    > [XP Booster Item](#xp-booster-item) <br>
+    > [/use](#use) <br>
+    > [Item Durability](#item-durability) <br>
+  - [JSON Lists](#xp--levels)
+    > [JSON List Introduction](#profile) <br>
+    > [Using a JSON List to Store User Warnings](#using-a-json-list-to-store-user-warnings) <br>
+    > [/warn](#warn) <br>
+    > [/check-warns](#check-warns) <br>
+    > [Using a JSON List to Store Item Stats](#using-a-json-list-to-store-item-stats) <br>
 
 # JSON Functions
 ### $jsonParse[parsing]
@@ -95,12 +108,16 @@ Now lets say you want to add a new fruit to your bot but lots of people have alr
 ### Version Checking
 The first step is to actually setup a Version Checker this can be done in a JSON Variable so make a new one with the name `versions` and set the value as `{}` now add this $if block to every command you make.
 ```
+$if[$getVar[started;$authorID]==false]
+$title[you haven't started yet please use /start]
+$else
 $jsonParse[$getVar[versions;$authorID]]
 $if[$or[$json[0.1]==false]]
 $title[This bot has updated since you last used it!]
 $description[use /update to fix this up :)]
 $else
-// Your commands code
+$c[Your commands code]
+$endif
 $endif
 ```
 Now every time you update your bot you will have to go to each of your commands and add that new version to the checker, for example if i release another version `0.2` i update `$if[$or[$json[0.1]==false]]` to this `$if[$or[$json[0.1]==false;$json[0.2]==false]]` and if i make a `0.2.1` for example i then make it `$if[$or[$json[0.1]==false;$json[0.2]==false;$json[0.2.1]==false]]` and so on. <br>
@@ -112,7 +129,7 @@ $jsonParse[$getVar[versions;$authorID]]
 $if[$and[$json[0.1]==true]
 $title[Your already up to date!]
 $else
-// UPDATE CODE
+$c[UPDATE CODE]
 $endif
 $else
 $title[you havent started yet use /start]
@@ -125,7 +142,7 @@ $jsonParse[$getVar[versiosn;$authorID]]
 $if[$and[$json[0.1]==true]
 $title[Your already up to date!]
 $else
-// UPDATER START
+$c[UPDATER START]
 $var[version;$jsonStringify] // Store the version json code this is if you have multiple versions made so that its able to correctly update multiple versions at the same time.
 $if[$json[0.1]==false]
 $jsonSetString[0.1;true]
@@ -134,9 +151,9 @@ $jsonParse[$getVar[items;$authorID]] // Parse our items variable.
 $jsonSetString[bananas;0] // Add Bananas
 $setVar[items;$jsonStringify;$authorID] // Save new item
 $endif
-// if adding another version add below the last one for example if i was to make a v0.2 i would place it in this line.
+$c[if adding another version add below the last one for example if i was to make a v0.2 i would place it in this line.]
 $setVar[versions;$var[version];$authorID]]
-// UPDATER END
+$c[UPDATER END]
 $title[Update Successfull]
 $else
 $title[you havent started yet use /start]
@@ -165,16 +182,16 @@ Now that we got the essentials out the way lets get into actually using these JS
 `% Modulo.` <br>
 Here are some examples of it being used with `$jsonSetString`
 ```
-// +500 Cash Example
+$c[+500 Cash Example]
 $jsonSetString[cash;$calculate[$json[cash]+500]]
 
-// -500 Cash Example
+$c[-500 Cash Example]
 $jsonSetString[cash;$calculate[$json[cash]-500]]
 
-// Double Users Cash
+$c[Double Users Cash]
 $jsonSetString[cash;$calculate[$json[cash]*2]]
 
-// Halve Users Cash
+$c[Halve Users Cash]
 $jsonSetString[cash;$calculate[$json[cash]/2]]
 ```
 ### /add-cash
@@ -211,9 +228,69 @@ $setVar[stats;$jsonStringify;$authorID]
 # Economy System
 
 ### /balance
-
+Though we have already gone over `$json` we will one last time give a basic idea on how it works using a `./balance` command, this code below will display the users balance. <br>
+(Slash Command - /balance)
+```
+$if[$getVar[started;$authorID]==false]
+$title[you haven't started yet please use /start]
+$else
+$jsonParse[$getVar[versions;$authorID]]
+$if[$or[$json[0.1]==false]]
+$title[This bot has updated since you last used it!]
+$description[use /update to fix this up :)]
+$else
+$jsonParse[$getVar[stats;$authorID]]
+$title[$username's Balance]
+$description[cash: $$json[cash]]
+$endif
+$endif
+```
+*always remember to include your /start check and your Version Checker in every command you make!*
 ### /work
-
-### /inventory
+Here we will list another simple command to help you understand how to use `$json` with `$calculate` this command has a 30 second cooldown and will give the user `$5-55` every time its ran.
+(Slash Command - /work)
+```
+$if[$getVar[started;$authorID]==false]
+$title[you haven't started yet please use /start]
+$else
+$jsonParse[$getVar[versions;$authorID]]
+$if[$or[$json[0.1]==false]]
+$title[This bot has updated since you last used it!]
+$description[use /update to fix this up :)]
+$else
+$jsonParse[getVar[stats;$authorID]]
+$var[reward;$random[5;56]] $c[Here we are storing how much the user will get running the command.]
+$jsonSetString[cash;$calculate[$json[cash]+$var[reward]]]
+$setVar[stats;$jsonStringify;$authorID]
+$title[$username ran /work]
+$description[> $username Worked and managed to earn $$var[reward]]
+$endif
+$endif
+```
+### Dynamic /inventory
 
 ### /sell & /buy
+
+# XP & Levels
+
+### /profile
+
+### XP in Commands
+
+### Leveling Up
+
+### XP Booster Item
+
+### /use
+
+### Item Durability
+
+# JSON List Introduction
+
+### Using a JSON List to Store User Warnings
+
+### /warn
+
+### /check-warns
+
+### Using a JSON List to Store Item Stats
