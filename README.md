@@ -268,9 +268,70 @@ $endif
 $endif
 ```
 ### Dynamic /inventory
+Sick of Static Inventorys? (ones that show every item the bot has even if you have none of that item.) Well i have the solution for you, it took a little bit of work but i managed to workout the best way to make Dynamic Inventories using the code below. This example `/inventory` will only show items that you have atleast 1 of using our apples, oranges and pears values from earlier examples. <br>
+(Slash Command - /Inventory)
+```
+$if[$getVar[started;$authorID]==false]
+$title[you haven't started yet please use /start]
+$else
+$jsonParse[$getVar[versions;$authorID]]
+$if[$or[$json[0.1]==false]]
+$title[This bot has updated since you last used it!]
+$description[use /update to fix this up :)]
+$else
+$jsonParse[$getVar[items;$authorID]]
+$c[The code below is designed to allow each item to have there own line on the embed. it must be laid our exactly this way.]
+$if[$json[apples]>0] $var[apples;- $json[apples]x Apples
+] $else $endif
+$if[$json[oranges]>0] $var[oranges;- $json[oranges]x Oranges
+] $else $endif
+$if[$json[pears]>0] $var[pears;- $json[pears]x Pears
+] $else $endif
 
+$title[$username's Inventory]
+$description[$var[apples]$var[oranges]$var[pears]
+]
+$endif
+$endif
+```
+*add more `$if` blocks and `$var`'s for each item you have.*
 ### /sell & /buy
+This section will show you how to make a /sell command and a /buy command so you can buy and sell your precious apples, oranges and pears. We will be doing a different method than what you may be used to but doing it like this allows for more efficiency. Firstly we will make `/sell` once you have the slash command made add two options both set as required, the first option have it named `item` and enable predefined choices, create 3 choices set there **names** as `Apple [$3 Each]`, `Orange [$5 Each]`, `Pear [$8 Each]` and set there **values** as `apples`, `oranges`, `pears`. For the second option call it `amount` and just have it set as required. <br>
 
+Now that you have that setup this will be your `/sell` commands code.
+```
+$if[$getVar[started;$authorID]==false]
+$title[you haven't started yet please use /start]
+$else
+$jsonParse[$getVar[versions;$authorID]]
+$if[$or[$json[0.1]==false]]
+$title[This bot has updated since you last used it!]
+$description[use /update to fix this up :)]
+$else
+$jsonParse[$getVar[items;$authorID]]
+$if[$json[$message[item]]>=$message[amount]]
+$if[$message[item]==apples] $var[sellPrice;3] $c[here we are saving how much you will get per what item you selected.]
+$elseif[$message[item]==oranges] $var[sellPrice;5]
+$elseif[$message[item]==pears] $var[sellPrice;8]
+$endif
+
+$jsonSetString[$message[item];$calculate[$json[$message[item]]-$message[amount]]]
+$setVar[items;$jsonStringify;$authorID]
+
+$jsonParse[$getVar[stats;$authorID]
+$jsonSetString[cash;$calculate[$json[cash]+($message[amount]*$var[sellPrice])]]
+$setVar[stats;$jsonStringify;$authorID]
+$else
+$title[you dont have enough $var[item] for this]
+$endif
+$endif
+$endif
+```
+
+Now for our `/buy` command you will make two options one `item` and one `amount`. We will have the same names and values as before in the `item` option but with the prices set to `$1, $3` and `$5` the below code is for a `/buy` command using JSON.
+```
+
+```
 # XP & Levels
 
 ### /profile
