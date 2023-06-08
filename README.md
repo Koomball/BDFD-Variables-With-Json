@@ -33,13 +33,26 @@ For example if we have a variable called items and in it we have stored apples, 
 (Slash Command - /test)
 ```
 $jsonParse[$getVar[items;$authorID]]
-$jsonSetString[apples;0]
-$jsonSetString[oranges;0]
-$jsonSetString[pears;0]
+$jsonSetString[apples;1]
+$jsonSetString[oranges;2]
+$jsonSetString[pears;3]
 $setVar[items;$jsonStringify;$authorID]
-```
-*you may notice here that we use `$setVar[items;$jsonStringify;$authorID]` to save the JSON code, the Function `$jsonStringify` will output the parsed json code along with any changes that have been made to it since it was parsed, this is important to remember!*
 
+variable set
+```
+*you may notice here that we use `$setVar[items;$jsonStringify;$authorID]` to save the JSON code, the Function `$jsonStringify` will output the parsed json code along with any changes that have been made to it since it was parsed, this is important to remember!* <br>
+
+### $json[string]
+Now that you have set your JSON code you can use `$json` to get whatever values you have stores, in this example we are going to use `$json` to get how many apples, oranges and pears we have. <br>
+(Slash Command - /inventory)
+```
+$jsonParse[$getVar[items;$authorID]]
+
+Inventory
+$json[apples] Apples
+$json[oranges] Oranges
+$json[pears] Pears
+```
 ## /start
 
 ### Setting up your /start command
