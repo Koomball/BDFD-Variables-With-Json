@@ -53,19 +53,100 @@ $json[apples] Apples
 $json[oranges] Oranges
 $json[pears] Pears
 ```
-![image](2023-06-08_172710848.png)
+![image](image_2023-06-08_172710848.png) <br>
+*The two blocks of code will output these results.*
+
 ## /start
+Now that you understand the basics i will explain an important part of JSON variables, which is a /start command and a Version Checker (explained later). The purpose of a `/start` command is to set the users variables with the correct json code before they can use any other command. this ensures no errors occur later down the line as for example a command may add an +1 apple to the user, but if `$json[apple]` doesnt return a number then the code can break. <br>
 
 ### Setting up your /start command
+To get started make a variable named `started` and set the value to `false`, the /start command we are going to make below will include the items, stats and other json information we will use in the guides below. If you later for example a new item to your bot after you set this command up then it can cause errors unless you have a Version Checker which will be explained later. <br>
+(Slash Command - /start) <br>
+(Variables: <br>
+`Name: stats, Value: {}` <br>
+`Name: items, Value: {}`) <br>
+```
+$if[$getVar[started;$authorID]==true]
+$title[you have already used /start]
+$else
+$jsonParse[$getVar[stats;$authorID]]
+$jsonSetString[cash;0]
+$jsonSetString[xp;0]
+$jsonSetString[lvl;0]
+$jsonSetString[lvlR;100]
+$setVar[stats;$jsonStringify;$authorID]
 
+$jsonParse[$getVar[items;$authorID]]
+$jsonSetString[apples;0]
+$jsonSetString[oranges;0]
+$jsonSetString[pears;0]
+$setVar[items;$jsonStringify;$authorID]
+
+$title[/start success]
+$endif
+```
 ## Setting up After /start
-
+Now lets say you want to add a new fruit to your bot but lots of people have already started, you cant make them all use /start again or there stuff will get reset and you feel like you have lost all hope to update your bot and its all because of json. Have no fear for Version Checking is here a system i myself have designed and use that makes updating users json variables easier than ever before! <br>
 ### Version Checking
-
+The first step is to actually setup a Version Checker this can be done in a JSON Variable so make a new one with the name `versions` and set the value as `{}` now add this $if block to every command you make.
+```
+$jsonParse[$getVar[versions;$authorID]]
+$if[$or[$json[0.1]==false]]
+$title[This bot has updated since you last used it!]
+$description[use /update to fix this up :)]
+$else
+// Your commands code
+$endif
+```
+Now every time you update your bot you will have to go to each of your commands and add that new version to the checker, for example if i release another version `0.2` i update `$if[$or[$json[0.1]==false]]` to this `$if[$or[$json[0.1]==false;$json[0.2]==false]]` and if i make a `0.2.1` for example i then make it `$if[$or[$json[0.1]==false;$json[0.2]==false;$json[0.2.1]==false]]` and so on. <br>
 ### /update
-
-# Economy and Items With Json
-In this example the variables you will need are as listed <br> `Name: cash, Value: 0` <br> `Name: items, Value: {}`
+Now once you have setup your Version Checker lets say you want to add a new fruit for example Bananas. You will make a new command `/update` and start it of like this.
+```
+$if[$getVar[started:$authorID]==true]
+$jsonParse[$getVar[versions;$authorID]]
+$if[$and[$json[0.1]==true]
+$title[Your already up to date!]
+$else
+// UPDATE CODE
+$endif
+$else
+$title[you havent started yet use /start]
+$endif
+```
+<br> Now you need to set up the actual variable update, this can be done pretty easily with `$jsonSetString` and `$jsonParse` inside of `$if` blocks, this example below will add Bananas to the `items` variable for users who have already used `/start`
+```
+$if[$getVar[started:$authorID]==true]
+$jsonParse[$getVar[versiosn;$authorID]]
+$if[$and[$json[0.1]==true]
+$title[Your already up to date!]
+$else
+// UPDATER START
+$var[version;$jsonStringify] // Store the version json code this is if you have multiple versions made so that its able to correctly update multiple versions at the same time.
+$if[$json[0.1]==false]
+$jsonSetString[0.1;true]
+$var[version;$jsonStringify] // Saves update for later.
+$jsonParse[$getVar[items;$authorID]] // Parse our items variable.
+$jsonSetString[bananas;0] // Add Bananas
+$setVar[items;$jsonStringify;$authorID] // Save new item
+$endif
+// if adding another version add below the last one for example if i was to make a v0.2 i would place it in this line.
+$setVar[versions;$var[version];$authorID]]
+// UPDATER END
+$title[Update Successfull]
+$else
+$title[you havent started yet use /start]
+$endif
+```
+<br> If you ever plan to make another update to lets say add Lettuce then just use this code below and add the new updates to the area indicated. place this code below the $endif of the last version you made.
+```
+$jsonParse[$var[version]]
+$if[$json[0.1]==false]
+$jsonSetString[0.1;true]
+$var[version;$jsonStringify] // Saves update for later.
+// updates added in version (new items, stats, tools etc etc.)
+$endif
+```
+*remember to add new versions to all your commands Version Checkers and to `$if[$and[$json[0.1]==true]` in the /update command*
 
 ### /balance
 
