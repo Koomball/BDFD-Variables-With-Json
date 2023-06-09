@@ -32,7 +32,7 @@ This guide will explain how to setup JSON variables, update users variables, set
     > [/use](#use) <br>
     > [Item Durability](#item-durability) <br>
   - [JSON Lists](#xp--levels)
-    > [JSON List Introduction](#profile) <br>
+    > [JSON List Introduction](#json-list-introduction) <br>
     > [Using a JSON List to Store User Warnings](#using-a-json-list-to-store-user-warnings) <br>
     > [/warn](#warn) <br>
     > [/check-warns](#check-warns) <br>
@@ -330,12 +330,40 @@ $endif
 
 Now for our `/buy` command you will make two options one `item` and one `amount`. We will have the same names and values as before in the `item` option but with the prices set to `$1, $3` and `$5` the below code is for a `/buy` command using JSON.
 ```
+$if[$getVar[started;$authorID]==false]
+$title[you haven't started yet please use /start]
+$else
+$jsonParse[$getVar[versions;$authorID]]
+$if[$or[$json[0.1]==false]]
+$title[This bot has updated since you last used it!]
+$description[use /update to fix this up :)]
+$else
+$jsonParse[$getVar[items;$authorID]]
+$if[$json[$message[item]]>=$message[amount]]
+$if[$message[item]==apples] $var[buyPrice;1] $c[here we are saving how much it will cost per item inputted.]
+$elseif[$message[item]==oranges] $var[buyPrice;3]
+$elseif[$message[item]==pears] $var[buyPrice;5]
+$endif
 
+$jsonSetString[$message[item];$calculate[$json[$message[item]]+$message[amount]]]
+$setVar[items;$jsonStringify;$authorID]
+
+$jsonParse[$getVar[stats;$authorID]
+$jsonSetString[cash;$calculate[$json[cash]-($message[amount]*$var[buyPrice])]]
+$setVar[stats;$jsonStringify;$authorID]
+$else
+$title[you dont have enough cash for this]
+$endif
+$endif
+$endif
 ```
 # XP & Levels
 
 ### /profile
+Here we are gonna make a basic /profile command to display how much cash we have and our XP and Level. This can all be done pretty easily with `$json`
+```
 
+```
 ### XP in Commands
 
 ### Leveling Up
