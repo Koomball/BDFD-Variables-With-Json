@@ -425,7 +425,7 @@ $jsonSetString[lvlR;$calculate[$json[lvlR]+10]]
 Now we are going to setup an item that can give a 2.5x XP boost when using commands, to avoid having to setup a new JSON Version we are just going to use our already existing apples to do this. Below i will detail how to make a `/use <item>` command and how to setup an Item Durability.
 
 ### /use
-
+Firstly we are going to make a slash command called `/use`
 ### Item Durability
 
 # JSON List Introduction
@@ -441,8 +441,9 @@ $nomention
 $jsonParse[$getVar[warnings;$message[user]]]
 $jsonSetString[warns;$calculate[$json[warns]+1]]
 $var[warning;$json[warns]]
-$jsonSetString[w-$var[warning];$message[reason]]
-$setVar[warnings;$jsonStringify;$message[user]]]
+$jsonSetString[w-$var[warning];R;$message[reason]]
+$jsonSetString[w-$var[warning];I;$authorID]
+$setVar[warnings;$jsonStringify;$message[user]]
 
 $title[<@$message[user]> Warned]
 $description[> Warning Number: $var[warning]
@@ -450,5 +451,52 @@ $description[> Warning Number: $var[warning]
 ]
 ```
 ### /check-warns
+Now we are going to need one more JSON Variable, so make a new variable and call it `warnPage` and set the value to `{}`. Now we will make a slash command called `check-warns` with one option named `user` set this as a user option. We will start by placing this code into the command. <br>
+(Slash Command - /check-warns <user>)
+```
+$nomention
+$jsonParse[$getVar[warnings;$message[user]]]
+$var[pages;$json[warns]]
+$var[page;1]
+$var[reason;$json[w-$var[page];R]]
+$var[moderator;$json[w-$var[page];I]]
+$jsonParse[$getVar[warnPage;$message[user]]]
+$jsonSetString[page;1]
+$jsonSetString[pages;$var[pages]]
+$setVar[warnPage;$jsonStringify;$authorID]
+$title[<@$message[user]>'s Warning History]
+$color[FF044]
+$description[Warning - $var[page]
+Issued By: <@$var[moderator]> ($var[moderator])
 
+Warn Reason: $var[reason]]
+$footer[Warning $var[page]/$var[pages]]
+$addButton[no;prev-$authorID;<;danger;yes;]
+$if[$var[pages]>1] $addButton[no;next-$authorID;>;danger;no;]
+$else $addButton[no;next-$authorID;>;danger;yes;]
+$endif
+```
+Now that we have made this we need to add responses to our previous page and next page buttons that will allow people to move through the users warning history, Firstly we will start with our `next-$authorID` button by making a new command with the trigger as `$onInteraction` and in this place this code.
+```
+$jsonParse[$getVar[warnPage;$authorID]]
+$var[page;$calculate[$json[page]+1]
+$var[pages;$json[pages]]
+$jsonSetString[page;$var[page]]
+$setVar[warnPage;$jsonStringify;$authorID]
+$jsonParse[$getVar[warnings;$authorID]
+$var[reason;$json[w-$var[page];R]]
+$var[moderator;$json[w-$var[page];I]]
+
+$title[<@$message[user]>'s Warning History]
+$color[FF044]
+$description[Warning - $var[page]
+Issued By: <@$var[moderator]> ($var[moderator])
+
+Warn Reason: $var[reason]]
+$footer[Warning $var[page]/$var[pages]]
+$addButton[no;prev-$authorID;<;danger;no;]
+$if[$var[page]<$var[pages]] $addButton[no;next-$authorID;>;danger;no;]
+$else $addButton[no;next-$authorID;>;danger;yes;]
+$endif
+```
 ### Using a JSON List to Store Item Stats
