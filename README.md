@@ -1,3 +1,7 @@
+`Last Updated: 10/06/2023 8:34PM, GMT+10` <br>
+- *Added half of the XP and Leveling System (yet to include /use and item durabilility)* <br>
+- *Added JSON List introduction and /warn (yet to include /check-warns <user> and storing item stats.* <br>
+
 # BDFD Variables with JSON
 Bot Designer for Discord is an excellent app but one issue you may encounter making your bot is the variable limit, this guide will introduce you to using JSON with variables to be able to save yourself a massive amount of variables.
 
@@ -425,11 +429,26 @@ Now we are going to setup an item that can give a 2.5x XP boost when using comma
 ### Item Durability
 
 # JSON List Introduction
-
+This is the most advanced section of the guide we will be using `$textSplit` and `$splitText` in some parts of this section so it is advised to familiar yourself with these before going fowards. If you have already used these functions before or just simply dont care we will start off with how to create a JSON List.
 ### Using a JSON List to Store User Warnings
-
+The first step to creating a Json List is making a variable for it, we are going to name this variable `warnings` and set the value of it to `{"warns":"0"}` now that you have that sorted we are going to make a command to warn a user. <br>
+The way a JSON List works is each warning is marked with a number `1, 2, 3, 4, etc..` and the value `{"warns":"0"}` we added before we tally how many warns there is. We then make a `/check-warns <user` command that will be able to display 1 warning per page which will be explained after `/warn`.
 ### /warn
+Now firstly we will need to make a command called `warn` add to `required` options one option will be `user` set as a user option, and our second option is `reason` set as a text option. <br>
+We will now make this simple command that will add a warn to the user using our JSON List.
+```
+$nomention
+$jsonParse[$getVar[warnings;$message[user]]]
+$jsonSetString[warns;$calculate[$json[warns]+1]]
+$var[warning;$json[warns]]
+$jsonSetString[w-$var[warning];$message[reason]]
+$setVar[warnings;$jsonStringify;$message[user]]]
 
+$title[<@$message[user]> Warned]
+$description[> Warning Number: $var[warning]
+> Warning Reason: $message[reason]
+]
+```
 ### /check-warns
 
 ### Using a JSON List to Store Item Stats
