@@ -1,6 +1,6 @@
-`Last Updated: 10/06/2023 8:34PM, GMT+10` <br>
-- *Added half of the XP and Leveling System (yet to include /use and item durabilility)* <br>
-- *Added JSON List introduction and /warn (yet to include /check-warns <user> and storing item stats.* <br>
+`Last Updated: 11/06/2023 1:10AM, GMT+10` <br>
+- *Added /check-warns and the next page interaction to the JSON List warn guide. (still missing previous page interaction)*
+- *the above addition may not work yet*
 
 # BDFD Variables with JSON
 Bot Designer for Discord is an excellent app but one issue you may encounter making your bot is the variable limit, this guide will introduce you to using JSON with variables to be able to save yourself a massive amount of variables.
