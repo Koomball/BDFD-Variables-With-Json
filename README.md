@@ -49,6 +49,7 @@ For example if we have a variable called items and in it we have stored apples, 
 `$jsonSetString` will be the Function you use most in these examples and allows you to modify your values with no JSON knowledge at all! for example in the code shown below we will create a variable in the app called `items` set the value of this variable to `{}` by default for now. We will now add apples, oranges and pears and how many of each item the user has with the code shown below. <br>
 (Slash Command - /test)
 ```
+$nomention
 $jsonParse[$getVar[items;$authorID]]
 $jsonSetString[apples;1]
 $jsonSetString[oranges;2]
@@ -63,6 +64,7 @@ variable set
 Now that you have set your JSON code you can use `$json` to get whatever values you have stores, in this example we are going to use `$json` to get how many apples, oranges and pears we have. <br>
 (Slash Command - /inventory)
 ```
+$nomention
 $jsonParse[$getVar[items;$authorID]]
 
 Inventory
@@ -83,6 +85,7 @@ To get started make a variable named `started` and set the value to `false`, the
 `Name: stats, Value: {}` <br>
 `Name: items, Value: {}`) <br>
 ```
+$nomention
 $if[$getVar[started;$authorID]==true]
 $title[you have already used /start]
 $else
@@ -124,6 +127,7 @@ Now every time you update your bot you will have to go to each of your commands 
 ### /update
 Now once you have setup your Version Checker lets say you want to add a new fruit for example Bananas. You will make a new command `/update` and start it of like this.
 ```
+$nomention
 $if[$getVar[started:$authorID]==true]
 $jsonParse[$getVar[versions;$authorID]]
 $if[$and[$json[0.1]==true]
@@ -137,6 +141,7 @@ $endif
 ```
 <br> Now you need to set up the actual variable update, this can be done pretty easily with `$jsonSetString` and `$jsonParse` inside of `$if` blocks, this example below will add Bananas to the `items` variable for users who have already used `/start`
 ```
+$nomention
 $if[$getVar[started:$authorID]==true]
 $jsonParse[$getVar[versiosn;$authorID]]
 $if[$and[$json[0.1]==true]
@@ -198,6 +203,7 @@ $jsonSetString[cash;$calculate[$json[cash]/2]]
 In this section we will make a command that adds a inputted amount of cash to a user. Firstly we must make a slash command and name it `add-cash` this slash command will need two options which can be added below where you name and set the description of your slash command. The first option you need is `user` set this to a user input and mark it as required. The second option will be called `amount` leave the input type as the default and set it as required. <br>
 Now we will use the code below to add to the selected users cash.
 ```
+$nomention
 $jsonParse[$getVar[stats;$message[user]]
 $jsonSetString[cash;$calculate[$json[cash]+$message[amount]]]
 $setVar[stats;$jsonStringify;$message[user]]
@@ -207,6 +213,7 @@ $title[added $message[amount] cash to user]
 ### /remove-cash
 We can reverse the effect in another command with the same options but lets name it `remove-cash` swap the `+` in `$jsonSetString` with a `-` and now you have a command that removes cash from the inputted user.
 ```
+$nomention
 $jsonParse[$getVar[stats;$message[user]]
 $jsonSetString[cash;$calculate[$json[cash]-$message[amount]]]
 $setVar[stats;$jsonStringify;$message[user]]
@@ -231,6 +238,7 @@ $setVar[stats;$jsonStringify;$authorID]
 Though we have already gone over `$json` we will one last time give a basic idea on how it works using a `./balance` command, this code below will display the users balance. <br>
 (Slash Command - /balance)
 ```
+$nomention
 $if[$getVar[started;$authorID]==false]
 $title[you haven't started yet please use /start]
 $else
@@ -250,6 +258,7 @@ $endif
 Here we will list another simple command to help you understand how to use `$json` with `$calculate` this command has a 30 second cooldown and will give the user `$5-55` every time its ran.
 (Slash Command - /work)
 ```
+$nomention
 $if[$getVar[started;$authorID]==false]
 $title[you haven't started yet please use /start]
 $else
@@ -271,6 +280,7 @@ $endif
 Sick of Static Inventorys? (ones that show every item the bot has even if you have none of that item.) Well i have the solution for you, it took a little bit of work but i managed to workout the best way to make Dynamic Inventories using the code below. This example `/inventory` will only show items that you have atleast 1 of using our apples, oranges and pears values from earlier examples. <br>
 (Slash Command - /Inventory)
 ```
+$nomention
 $if[$getVar[started;$authorID]==false]
 $title[you haven't started yet please use /start]
 $else
@@ -300,6 +310,7 @@ This section will show you how to make a /sell command and a /buy command so you
 
 Now that you have that setup this will be your `/sell` commands code.
 ```
+$nomention
 $if[$getVar[started;$authorID]==false]
 $title[you haven't started yet please use /start]
 $else
@@ -330,6 +341,7 @@ $endif
 
 Now for our `/buy` command you will make two options one `item` and one `amount`. We will have the same names and values as before in the `item` option but with the prices set to `$1, $3` and `$5` the below code is for a `/buy` command using JSON.
 ```
+$nomention
 $if[$getVar[started;$authorID]==false]
 $title[you haven't started yet please use /start]
 $else
@@ -362,13 +374,51 @@ $endif
 ### /profile
 Here we are gonna make a basic /profile command to display how much cash we have and our XP and Level. This can all be done pretty easily with `$json`
 ```
+$nomention
+$if[$getVar[started;$authorID]==false]
+$title[you haven't started yet please use /start]
+$else
+$jsonParse[$getVar[versions;$authorID]]
+$if[$or[$json[0.1]==false]]
+$title[This bot has updated since you last used it!]
+$description[use /update to fix this up :)]
+$else
 
+$jsonParse[$getVar[stats;$authorID]]
+$title[$username's Profile]
+$description[**User:** @username
+> Cash: $json[cash]
+> Level: $json[lvl]
+(XP | $json[xp]/$json[lvlR]]
+
+$endif
+$endif
 ```
+*this code will display what the image below shows if you have setup your `/start` command correctly* <br>
+
 ### XP in Commands
-
+Now for this example we are gonna grab our `/work` command from [here](work) and add this code below to it. (be sure to place it after the /start check and version checker as you would with all other commands.)
+```
+$jsonParse[$getVar[stats;$authorID]]
+$jsonSetString[xp;$calculate[$json[xp]+($random[1;6]*$json[multi])]]
+// Level up code in the next segment goes here.
+$setVar[stats;$jsonStringify;$authorID]
+```
+*remember to keep `$json[multi] there as we will use this for an XP Booster item later in this guide*
 ### Leveling Up
-
+Now that we have getting XP setup we are gonna use this simple `$if` block in the area designated in the last example to check if the user has enough xp to level up, and if they do it will remove the amount of xp it took to level up and add `1` level to the user.
+```
+$if[$json[xp]>=$json[lvlR]]
+$jsonSetString[xp;$calculate[$json[xp]-$json[lvlR]]]
+$jsonSetString[lvl;$calculate[$json[lvl]+1]]
+$endif
+```
+*you can also use this code below in the `$if` block to increase the amount of XP needed to level up each time the user levels up.*
+```
+$jsonSetString[lvlR;$calculate[$json[lvlR]+10]]
+```
 ### XP Booster Item
+Now we are going to setup an item that can give a 2.5x XP boost when using commands, to avoid having to setup a new JSON Version we are just going to use our already existing apples to do this. Below i will detail how to make a `/use <item>` command and how to setup an Item Durability.
 
 ### /use
 
