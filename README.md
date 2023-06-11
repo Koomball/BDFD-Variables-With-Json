@@ -1,6 +1,5 @@
-`Last Updated: 11/06/2023 1:10AM, GMT+10` <br>
-- *Added /check-warns and the next page interaction to the JSON List warn guide. (still missing previous page interaction)*
-- *the above addition may not work yet*
+`Last Updated: 11/06/2023 3:31PM, GMT+10` <br>
+- *Finished /warn and /check-warns JSON List guide.*
 
 # BDFD Variables with JSON
 Bot Designer for Discord is an excellent app but one issue you may encounter making your bot is the variable limit, this guide will introduce you to using JSON with variables to be able to save yourself a massive amount of variables.
@@ -437,7 +436,6 @@ The way a JSON List works is each warning is marked with a number `1, 2, 3, 4, e
 Now firstly we will need to make a command called `warn` add to `required` options one option will be `user` set as a user option, and our second option is `reason` set as a text option. <br>
 We will now make this simple command that will add a warn to the user using our JSON List.
 ```
-$nomention
 $jsonParse[$getVar[warnings;$message[user]]]
 $jsonSetString[warns;$calculate[$json[warns]+1]]
 $var[warning;$json[warns]]
@@ -478,25 +476,63 @@ $endif
 ```
 Now that we have made this we need to add responses to our previous page and next page buttons that will allow people to move through the users warning history, Firstly we will start with our `next-$authorID` button by making a new command with the trigger as `$onInteraction` and in this place this code.
 ```
+$nomention
+$if[$customID==next-$authorID]
+$removeButtons
 $jsonParse[$getVar[warnPage;$authorID]]
-$var[page;$calculate[$json[page]+1]
-$var[pages;$json[pages]]
+$var[user;$json[user]]
+$var[page;$calculate[$json[page]+1]]
 $jsonSetString[page;$var[page]]
 $setVar[warnPage;$jsonStringify;$authorID]
-$jsonParse[$getVar[warnings;$authorID]
+$jsonParse[$getVar[warnings;$var[user]]]
+$var[pages;$json[warns]]
 $var[reason;$json[w-$var[page];R]]
 $var[moderator;$json[w-$var[page];I]]
 
-$title[<@$message[user]>'s Warning History]
+$title[$username[$var[user]]’s Warning History]
 $color[FF044]
-$description[Warning - $var[page]
+$description[Warning • $var[page]
 Issued By: <@$var[moderator]> ($var[moderator])
 
-Warn Reason: $var[reason]]
+Warn Reason: 
+> $var[reason]]
 $footer[Warning $var[page]/$var[pages]]
 $addButton[no;prev-$authorID;<;danger;no;]
 $if[$var[page]<$var[pages]] $addButton[no;next-$authorID;>;danger;no;]
 $else $addButton[no;next-$authorID;>;danger;yes;]
+$endif
+$endif
+```
+and now at the very button of our `$onInteraction` we will add the code for our `prev-$authorID` which is basically the same but slightly tweaked to work in reverse.
+```
+$if[$customID==prev-$authorID]
+$removeButtons
+$jsonParse[$getVar[warnPage;$authorID]]
+$var[user;$json[user]]
+$var[page;$calculate[$json[page]-1]]
+$jsonSetString[page;$var[page]]
+$setVar[warnPage;$jsonStringify;$authorID]
+$jsonParse[$getVar[warnings;$var[user]]]
+$var[pages;$json[warns]]
+$var[reason;$json[w-$var[page];R]]
+$var[moderator;$json[w-$var[page];I]]
+
+$title[$username[$var[user]]’s Warning History]
+$color[FF044]
+$description[Warning • $var[page]
+Issued By: <@$var[moderator]> ($var[moderator])
+
+Warn Reason: 
+> $var[reason]]
+$footer[Warning $var[page]/$var[pages]]
+$if[$var[page]==1] $addButton[no;prev-$authorID;<;danger;yes;]
+$else $addButton[no;prev-$authorID;<;danger;no;]
+$endif
+$if[$var[page]<$var[pages]] 
+$addButton[no;next-$authorID;>;danger;no;]
+$else 
+$addButton[no;next-$authorID;>;danger;yes;]
+$endif
 $endif
 ```
 ### Using a JSON List to Store Item Stats
