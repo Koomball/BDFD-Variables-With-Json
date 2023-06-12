@@ -1,5 +1,5 @@
-`Last Updated: 11/06/2023 3:31PM, GMT+10` <br>
-- *Finished /warn and /check-warns JSON List guide.*
+`Last Updated: 13/06/2023 12:02AM, GMT+10` <br>
+- *Expanded on $json*
 
 # BDFD Variables with JSON
 Bot Designer for Discord is an excellent app but one issue you may encounter making your bot is the variable limit, this guide will introduce you to using JSON with variables to be able to save yourself a massive amount of variables.
@@ -76,8 +76,19 @@ $json[oranges] Oranges
 $json[pears] Pears
 ```
 ![image](image_2023-06-08_172710848.png) <br>
-*The two blocks of code will output these results.*
+*The two blocks of code will output these results.* <br>
+<br>
+We can also add more arguments to `$json` to make more complex arrays. For example we will make one with `apples, oranges and pears` again but will expand them to include `amount` (how many of the item we have) and `discovered` if we have ever found the item before.
+```
+$nomention
+$jsonParse[$getVar[items;$authorID]]
 
+Inventory
+$if[$json[apples;discovered]==true] $json[apples;amount] Apples $else (Undiscovered) $endif
+$if[$json[oranges;discovered]==true] $json[oranges;amount] Oranges $else (Undiscovered) $endif
+$if[$json[pears;discovered]==true] $json[pears;amount] Pears $else (Undiscovered) $endif
+```
+*This is a static inventory, later in the guide we will look into making one that doesnt include the (Undiscovered) but only shows items you have more than 1 of*
 # /start and /update
 Now that you understand the basics i will explain an important part of JSON variables, which is a /start command and a Version Checker (explained later). The purpose of a `/start` command is to set the users variables with the correct json code before they can use any other command. this ensures no errors occur later down the line as for example a command may add an +1 apple to the user, but if `$json[apple]` doesnt return a number then the code can break. <br>
 
