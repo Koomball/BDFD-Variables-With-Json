@@ -1,5 +1,5 @@
-`Last Updated: 13/06/2023 12:02AM, GMT+10` <br>
-- *Expanded on $json*
+`Last Updated: 13/06/2023 12:07AM, GMT+10` <br>
+- *Expanded on $json and $jsonSetString*
 
 # BDFD Variables with JSON
 Bot Designer for Discord is an excellent app but one issue you may encounter making your bot is the variable limit, this guide will introduce you to using JSON with variables to be able to save yourself a massive amount of variables.
@@ -57,6 +57,22 @@ $jsonParse[$getVar[items;$authorID]]
 $jsonSetString[apples;1]
 $jsonSetString[oranges;2]
 $jsonSetString[pears;3]
+$setVar[items;$jsonStringify;$authorID]
+
+variable set
+```
+We can also add more arguments before the `value` to make more complex arrays, in this example we sill still use `oranges, apples and pears` but we will expand them to include `amount` (how many the user has) and `discovered` (if the user has collected the item before). This code below will set `apples;amount = 1, oranges;amount = 1, pears;amount = 0` and set `apples;discovered = true, oranges;discovered =true, pears;discovered = false`
+```
+$nomention
+$jsonParse[$getVar[items;$authorID]]
+$jsonSetString[apples;amount;1]
+$jsonSetString[apples;discovered;true]
+
+$jsonSetString[oranges;amount;1]
+$jsonSetString[oranges;discovered;true]
+
+$jsonSetString[pears;amount;0]
+$jsonSetString[pears;discovered;false]
 $setVar[items;$jsonStringify;$authorID]
 
 variable set
