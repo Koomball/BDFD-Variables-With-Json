@@ -1,5 +1,4 @@
-`Last Updated: 13/06/2023 12:07AM, GMT+10` <br>
-- *Expanded on $json and $jsonSetString*
+`Last Updated: 06/05/2024 7:19AM, GMT+10` <br>
 
 # BDFD Variables with JSON
 Bot Designer for Discord is an excellent app but one issue you may encounter making your bot is the variable limit, this guide will introduce you to using JSON with variables to be able to save yourself a massive amount of variables.
